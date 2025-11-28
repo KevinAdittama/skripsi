@@ -1,0 +1,56 @@
+
+
+#cropp
+python 00_preprocess_crop.py 
+
+
+menjalakan cpu
+arcface
+python 01_debugCPU_resnet100_arcface.py --data-root "dataset_face_pribadi" --epochs 2
+python 01_debugCPU_ghostfacenets_arcface.py --data-root "dataset_face_pribadi" --epochs 125
+python 01_debugCPU_lafs_arcface.py --data-root "dataset_face_pribadi" --epochs 125
+python 01_debugCPU_transface_arcface.py --data-root "dataset_face_pribadi" --epochs 125
+
+adaface
+
+magface
+python 01_debugCPU_resnet_magface.py --data-root "dataset_face_pribadi" --epochs 125 --lr 0.05
+python 01_debugCPU_transface_magface.py --data-root "dataset_face_pribadi" --epochs 125
+python 01_debugCPU_lafs_magface.py --data-root "dataset_face_pribadi" --epochs 125 --lr 0.01
+
+
+
+menjalakan gpu
+catatan penting jangan lupa file "loss_adaface.py"dan"loss_magface"di satu file yang sama dengan code atau
+sudah berada di server
+
+gpu 0
+python 01_trainGPU_resnet_arcface.py --data-root "path/ke/folder/dataset_publik"
+python 01_trainGPU_resnet_adaface.py --data-root "path/ke/dataset"
+python 01_trainGPU_resnet_magface.py --data-root "path/ke/dataset"
+
+python 01_trainGPU_ghostnet_arcface.py --data-root "path/ke/dataset" --batch-size 256
+python 01_trainGPU_ghostnet_magface.py --data-root "path/ke/dataset_publik"
+python 01_trainGPU_ghostnet_adaface.py --data-root "path/ke/dataset"
+
+
+gpu 1
+python 01_trainGPU_lafs_arcface.py --data-root "path/ke/dataset" --batch-size 128
+python 01_trainGPU_lafs_adaface.py --data-root "path/ke/dataset"
+python 01_trainGPU_lafs_magface.py --data-root "path/ke/dataset"
+
+python 01_trainGPU_transface_arcface.py --data-root "path/ke/dataset" --batch-size 128
+python 01_trainGPU_transface_adaface.py --data-root "path/ke/dataset"
+
+
+uji validasi benchmark
+python 02_all_models_benchmark.py --weights-dir "weights"
+python 02_benchmarkGPU_all_models.py --weights-dir "weights" --data-root "path/ke/dataset_uji"
+
+
+kenario A: Jika pakai Dataset CASIA-WebFace (Publik)
+ResNet, GhostNet, LAFS: Set --epochs 35
+TransFace (ViT): Set --epochs 50 (Berikan dia waktu ekstra)
+
+Skenario B: Jika pakai Dataset Pribadi (Absensi)
+Semua Model: Set --epochs 125
